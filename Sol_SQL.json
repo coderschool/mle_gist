@@ -1,0 +1,11 @@
+{
+  "SQL_Day1": {
+    "Q1": "SELECT DISTINCT City FROM customers WHERE Country='Germany'",
+    "Q2": "SELECT * FROM customers WHERE country = 'USA' ORDER BY FirstName ASC, LastName DESC",
+    "Q3": "'SELECT * FROM invoices WHERE BillingCountry='USA' and BillingCity='Boston' ORDER BY Total DESC LIMIT 3",
+    "Q4": "SELECT * FROM Invoices WHERE InvoiceDate LIKE '2012%' ORDER BY Total DESC LIMIT 2 OFFSET 2",
+    "Q5": "SELECT * FROM customers \nWHERE company IN ('Google Inc.','Microsoft Corporation','Apple Inc.') \nORDER BY State,City",
+    "Q6": "SELECT DISTINCT BillingCountry FROM invoices WHERE BillingState is NULL ORDER BY BillingCountry",
+    "Q7": "SELECT DISTINCT BillingCity FROM invoices WHERE BillingCity NOT LIKE 'A%' OR BillingCity NOT LIKE 'E%' OR BillingCity NOT LIKE 'I%' OR BillingCity NOT LIKE 'O%' OR BillingCity NOT LIKE 'U%' ORDER BY BillingCity"
+  }
+}
