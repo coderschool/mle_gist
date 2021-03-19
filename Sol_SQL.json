@@ -1,11 +1,19 @@
 {
   "SQL_Day1": {
-    "Q1": "SELECT DISTINCT City FROM customers WHERE Country='Germany'",
-    "Q2": "SELECT * FROM customers WHERE country = 'USA' ORDER BY FirstName ASC, LastName DESC",
-    "Q3": "SELECT * FROM invoices WHERE BillingCountry='USA' and BillingCity='Boston' ORDER BY Total DESC LIMIT 3",
-    "Q4": "SELECT * FROM Invoices WHERE InvoiceDate LIKE '2012%' ORDER BY Total DESC LIMIT 2 OFFSET 2",
-    "Q5": "SELECT * FROM customers \nWHERE company IN ('Google Inc.','Microsoft Corporation','Apple Inc.') \nORDER BY State,City",
-    "Q6": "SELECT DISTINCT BillingCountry FROM invoices WHERE BillingState is NULL ORDER BY BillingCountry",
-    "Q7": "SELECT DISTINCT BillingCity FROM invoices WHERE BillingCity NOT LIKE 'A%' OR BillingCity NOT LIKE 'E%' OR BillingCity NOT LIKE 'I%' OR BillingCity NOT LIKE 'O%' OR BillingCity NOT LIKE 'U%' ORDER BY BillingCity"
-  }
+    "Q1": {"ID":"", "Score":10, "Sol": "SELECT DISTINCT City FROM customers WHERE Country='Germany'"},
+    "Q2": {"ID":"", "Score":10, "Sol": "SELECT * FROM customers WHERE country = 'USA' ORDER BY FirstName ASC, LastName DESC"},
+    "Q3": {"ID":"", "Score":10, "Sol": "SELECT * FROM invoices WHERE BillingCountry='USA' and BillingCity='Boston' ORDER BY Total DESC LIMIT 3"},
+    "Q4": {"ID":"", "Score":10, "Sol": "SELECT * FROM Invoices WHERE InvoiceDate LIKE '2012%' ORDER BY Total DESC LIMIT 2 OFFSET 2"},
+    "Q5": {"ID":"", "Score":20, "Sol": "SELECT * FROM customers \nWHERE company IN ('Google Inc.','Microsoft Corporation','Apple Inc.') \nORDER BY State,City"},
+    "Q6": {"ID":"", "Score":20, "Sol": "SELECT DISTINCT BillingCountry FROM invoices WHERE BillingState is NULL ORDER BY BillingCountry"},
+    "Q7": {"ID":"", "Score":20, "Sol": "SELECT DISTINCT BillingCity FROM invoices WHERE BillingCity NOT LIKE 'A%' OR BillingCity NOT LIKE 'E%' OR BillingCity NOT LIKE 'I%' OR BillingCity NOT LIKE 'O%' OR BillingCity NOT LIKE 'U%' ORDER BY BillingCity"}
+  },
+  "SQL_Day2": {
+    "Q1": {"ID":"", "Score":10, "Sol": "SELECT c.FirstName, c.Lastname, i.InvoiceId, i.InvoiceDate, i.BillingCountry FROM customers c JOIN invoices i ON c.CustomerId = i.CustomerId WHERE Country = 'Brazil' ORDER BY c.Lastname"},
+    "Q2": {"ID":"", "Score":10, "Sol": "SELECT t.TrackId, t.Name FROM tracks as t JOIN genres as g USING (GenreId) WHERE g.Name != 'Rock' ORDER BY t.Name},
+    "Q3": {"ID":"", "Score":20, "Sol": "SELECT i.InvoiceId, i.InvoiceDate, e.FirstName, e.LastName FROM invoices i JOIN customers c ON  i.CustomerId = c.CustomerId JOIN employees e ON c.CustomerId = e.EmployeeId WHERE e.Title == 'Sales Support Agent' ORDER BY i.InvoiceDate DESC"},
+    "Q4": {"ID":"", "Score":20, "Sol": "SELECT e.FirstName, e.LastName, e.Title, COUNT(c.CustomerId) AS NumberOfCustomers FROM employees AS e LEFT JOIN customers AS c ON e.EmployeeId = c.SupportRepId GROUP BY e.EmployeeId ORDER BY NumberOfCustomers, e.LastName"},
+    "Q5": {"ID":"", "Score":20, "Sol": "SELECT e2.FirstName as Employee_Name, e2.Title as Employee_Title, e1.FirstName as Supervisor_Name, e1.Title as Supervisor_Title FROM employees as e1 JOIN employees as e2 ON e1.EmployeeId = e2.ReportsTo ORDER BY Employee_Title"},
+    "Q6": {"ID":"", "Score":20, "Sol": "SELECT c.CustomerId, c.FirstName, c.LastName, SUM(i.Total) as TotalPaid FROM customers as c JOIN invoices as i ON c.CustomerId = i.CustomerId GROUP BY c.CustomerId ORDER BY TotalPaid DESC LIMIT 1"},
+    "Q7": {"ID":"", "Score":20, "Sol": "SELECT ar.Name, SUM(inv.UnitPrice*inv.Quantity) as TotalIncome FROM artists as ar JOIN albums as al ON ar.ArtistId = al.ArtistId JOIN tracks as t ON t.AlbumId = al.AlbumId JOIN invoice_items as inv ON t.Trackid = inv.TrackId GROUP BY ar.ArtistId ORDER BY TotalIncome DESC LIMIT 3"}
 }
