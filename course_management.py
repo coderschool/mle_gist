@@ -51,7 +51,7 @@ def check(submission, solution, assignment_type, **kargs):
             print('Your solution is not correct, try again')
             return False
 
-            
+
 class User():
     def __init__(self, data):
         self.ATTRIBUTES = ['_id', 'name', 'email', 'password', 'created_by', 'updated_by', 'created_at', 'updated_at']
@@ -777,3 +777,6 @@ class SubmissionGrade():
     @classmethod
     def remove_submission_grade_by_id(cls, db_service, submission_grade_id):
         return db_service.delete(f'/submission-grades/{attendance_id}')
+
+API_URL = 'https://cs-platform-306304.et.r.appspot.com/api'
+db = DBService(API_URL)
