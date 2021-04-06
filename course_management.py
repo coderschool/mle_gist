@@ -50,19 +50,7 @@ def check(submission, solution, assignment_type, **kargs):
         except:
             print('Your solution is not correct, try again')
             return False
-
-    if (assignment_type == "Value"):
-        try:
-            if (isinstance(result, (int, str, float, bool))):
-                assert result == result_sub
-            else:
-                return False
-            print('You passed! Good job!')
-            return True
-        except:
-            print('Your solution is not correct, try again')
-            return False
-
+        
 
 class User():
     def __init__(self, data):
@@ -373,6 +361,10 @@ class Student():
     @classmethod
     def get_students_by_name(cls, db_service, student_name, output='DataFrame'):
         return cls.get_students(db_service, output, {'name': student_name})
+    
+    @classmethod
+    def get_students_by_email(cls, db_service, student_email, output='DataFrame'):
+        return cls.get_students(db_service, output, {'email': student_email})
 
     @classmethod
     def get_student_by_id(cls, db_service, student_id):
@@ -382,6 +374,52 @@ class Student():
     @classmethod
     def remove_student_by_id(cls, db_service, student_id):
         return db_service.delete(f'/students/{student_id}')
+    
+class Lead():
+    def __init__(self, data):
+        self.ATTRIBUTES = ['_id', 'cohort', 'cohort_id', 'assignment', 'assignment_id', 'cohort_name', 'assignment_name',
+                           'email', 'name',
+                           'created_by', 'updated_by', 'created_at', 'updated_at']
+        self.set_attributes(data)
+                
+    def set_attributes(self, data):
+        if (not data):
+            return
+        for key in data.keys():
+            snake_key = Utils.to_snake_case(key)
+            if (snake_key in self.ATTRIBUTES):
+                setattr(self, snake_key, data[key])
+
+    def __repr__(self):
+        name = getattr(self, 'name', '')
+        email = getattr(self, 'email', '')
+        return f'Lead {name} - {email}'
+
+    def to_json(self):
+        return {Utils.to_camel_case(key):getattr(self, key) for key in self.ATTRIBUTES if getattr(self, key, None)}
+    
+    def save(self, db_service):
+        if (not getattr(self, '_id', '')):
+            new_lead = db_service.post('/leads', self.to_json())
+            if (new_lead and '_id' in new_lead):
+                self.set_attributes(new_lead)
+        else:
+            updated_lead = db_service.put(f'/leads/{self._id}', self.to_json())
+    
+    @classmethod
+    def get_leads(cls, db_service, output='DataFrame', filter={}):
+        filter_params = Utils.build_filter_params(filter)
+        leads = db_service.get(f'/leads?page=1&limit=1000{filter_params}')['leads']
+        return Utils.output_form(cls, leads, output)
+
+    @classmethod
+    def get_leads_by_email(cls, db_service, lead_email, output='DataFrame'):
+        return cls.get_leads(db_service, output, {'email': lead_email})
+
+    @classmethod
+    def get_lead_by_id(cls, db_service, lead_id):
+        lead = db_service.get(f'/leads/{lead_id}')
+        return Lead(lead)
 
 
 class CohortMember():
@@ -789,6 +827,8 @@ class SubmissionGrade():
     @classmethod
     def remove_submission_grade_by_id(cls, db_service, submission_grade_id):
         return db_service.delete(f'/submission-grades/{attendance_id}')
-
+    
 API_URL = 'https://cs-platform-306304.et.r.appspot.com/api'
+# API_URL = 'http://localhost:8080/api'
+
 db = DBService(API_URL)
