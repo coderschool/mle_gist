@@ -127,7 +127,8 @@ class DBService():
     def post(self, path, data):
         response = requests.post(self.base_url + path, json=data, headers=self.headers).json()
         if ('success' in response):
-            print(response['message'])
+            if ('message' in response):
+                print(response['message'])
             return response['data']
         else:
             print(f"ERROR: {response['errors']['message']}")
