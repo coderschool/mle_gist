@@ -53,8 +53,10 @@ def check(submission, solution, assignment_type, **kargs):
         
     if (assignment_type == "Value"):
         try:
-            if (isinstance(result, (int, str, float, bool))):
-                assert result == result_sub
+            if (isinstance(solution, (int, float, bool))):
+                assert solution == submission
+            elif (isinstance(solution, (str))):
+                assert solution.lower() == submission.lower()
             else:
                 return False
             print('You passed! Good job!')
