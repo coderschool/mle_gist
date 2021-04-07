@@ -30,7 +30,7 @@ def check(submission, solution, assignment_type, **kargs):
                 if (result == locals()[func_name](*test_case)):
                     score += 1
             print(f'You have passed {score}/{len(test_cases)} test cases')
-            return score
+            return score/len(test_cases)
         except:
             print('Your solution is not correct, try again')
             return 0
