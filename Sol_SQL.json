@@ -33,7 +33,7 @@
     "Q7": {
       "ID": "",
       "Score": 20,
-      "Sol": "SELECT DISTINCT BillingCity FROM invoices WHERE BillingCity NOT LIKE 'A%' OR BillingCity NOT LIKE 'E%' OR BillingCity NOT LIKE 'I%' OR BillingCity NOT LIKE 'O%' OR BillingCity NOT LIKE 'U%' ORDER BY BillingCity"
+        "Sol": "SELECT DISTINCT BillingCity FROM invoices WHERE BillingCity NOT LIKE 'A%' AND BillingCity NOT LIKE 'E%' AND BillingCity NOT LIKE 'I%' AND BillingCity NOT LIKE 'O%' AND BillingCity NOT LIKE 'U%' ORDER BY BillingCity"
     }
   },
   "SQL_Day2": {
