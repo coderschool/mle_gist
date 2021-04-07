@@ -51,6 +51,18 @@ def check(submission, solution, assignment_type, **kargs):
             print('Your solution is not correct, try again')
             return False
         
+    if (assignment_type == "Value"):
+        try:
+            if (isinstance(result, (int, str, float, bool))):
+                assert result == result_sub
+            else:
+                return False
+            print('You passed! Good job!')
+            return True
+        except:
+            print('Your solution is not correct, try again')
+            return False
+        
 
 class User():
     def __init__(self, data):
