@@ -50,7 +50,7 @@
     "Q3": {
       "ID": "",
       "Score": 20,
-      "Sol": "SELECT i.InvoiceId, i.InvoiceDate, e.FirstName, e.LastName FROM invoices i JOIN customers c ON  i.CustomerId = c.CustomerId JOIN employees e ON c.CustomerId = e.EmployeeId WHERE e.Title == 'Sales Support Agent' ORDER BY i.InvoiceDate DESC"
+      "Sol": "SELECT i.InvoiceId, i.InvoiceDate, e.FirstName, e.LastName FROM invoices i JOIN customers c ON  i.CustomerId = c.CustomerId JOIN employees e ON c.SupportRepId = e.EmployeeId WHERE e.Title = 'Sales Support Agent' ORDER BY i.InvoiceDate DESC"
     },
     "Q4": {
       "ID": "",
