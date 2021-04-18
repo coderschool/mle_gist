@@ -2,68 +2,136 @@ import requests
 import re
 import pandas as pd
 import numpy as np
+import types
 
-def check(submission, solution, assignment_type, **kargs):
+def printt(msg,debug=False):
+    if not debug: print(msg)
+        
+def is_equal(a,b):
+    if isinstance(a, (int, str, float, bool)) and isinstance(b, (int, str, float, bool)):
+        return a == b
+    if isinstance(a, (pd.DataFrame, pd.Series)) and isinstance(b, (pd.DataFrame, pd.Series)):
+        return a.equals(b)
+    if isinstance(a, (np.ndarray)) and isinstance(b, (np.ndarray)):
+        return np.array_equal(a, b)
+    return False
+
+def check(submission, solution, assignment_type, **kwargs):
+    is_debug = kwargs['debug'] if 'debug' in kwargs else False
     if (assignment_type == 'SQL'):
-        conn = kargs['connection']
-        df_sub = pd.read_sql_query(submission, conn)
-        df_sol = pd.read_sql_query(solution, conn)
+        if 'connection' not in kwargs:
+            printt("No database connection input",is_debug)
+            return False
+        conn = kwargs['connection']
+        
+        if (not isinstance(solution, str)):
+            printt("Your SQL answer must be a string",is_debug)
+            return False
+        
         try:
-            assert df_sol.equals(df_sub)
-            print('You passed! Good job!')
-            return True
-        except:
-            print('Your solution is not correct, try again')
+            df_sub = pd.read_sql_query(submission, conn)
+            df_sol = pd.read_sql_query(solution, conn)
+            if np.array_equal(df_sol.values,df_sub.values):
+                printt('You passed! Good job!',is_debug)
+                return True
+            
+            printt("Your solution is not correct, try again!\n Make sure the columns' order is correct, as shown in the output",is_debug)
+            return False
+        except Exception as e:
+            printt(f'Something went wrong. {e}',is_debug)
             return False
 
     if (assignment_type == 'Function'):
-        test_cases = kargs['test_cases']
-        
+        if 'test_case' not in kwargs:
+            printt("No test cases input",is_debug)
+            return False
+        test_cases = kwargs['test_case']
+
         try:
             score = 0
             exec(submission)
             exec(solution)
-            func_name = submission.split('(')[0][4:]
+            func_name_sub = submission.split('(')[0][4:]
             func_name_sol = solution.split('(')[0][4:]
-            for test_case in test_cases:
-                result = locals()[func_name_sol](*test_case)
-                if (result == locals()[func_name](*test_case)):
+            for tc in test_cases:
+                result_sub = locals()[func_name_sub](*tc)
+                result_sol = locals()[func_name_sol](*tc)
+                if is_equal(result_sub,result_sol):
                     score += 1
-            print(f'You have passed {score}/{len(test_cases)} test cases')
+            printt(f'You have passed {score}/{len(test_cases)} test cases',is_debug)
             return score/len(test_cases)
         except:
-            print('Your solution is not correct, try again')
+            printt('Your solution is not correct, try again',is_debug)
             return 0
 
     if (assignment_type == "Expression"):
+        if (not isinstance(solution, str)):
+            printt("Your expression answer must be a string",is_debug)
+            return False
+
         try:
             result = eval(solution)
             result_sub = eval(submission)
-            if (isinstance(result, (int, str, float, bool))):
-                assert result == result_sub
-            if (isinstance(result, (pd.DataFrame, pd.Series))):
-                assert result.equals(result_sub)
-            if (isinstance(result, (np.ndarray))):
-                assert np.array_equal(result, result_sub)
-            print('You passed! Good job!')
+            assert is_equal(result,result_sub)
+            printt('You passed! Good job!',is_debug)
             return True
         except:
-            print('Your solution is not correct, try again')
+            printt('Your solution is not correct, try again',is_debug)
             return False
         
     if (assignment_type == "Value"):
         try:
-            if (isinstance(solution, (int, float, bool))):
-                assert solution == submission
-            elif (isinstance(solution, (str))):
-                assert solution.lower() == submission.lower()
-            else:
-                return False
-            print('You passed! Good job!')
+            assert is_equal(solution,submission)
+            printt('You passed! Good job!',is_debug)
             return True
         except:
-            print('Your solution is not correct, try again')
+            printt('Your solution is not correct, try again',is_debug)
             return False
+
+def verify_answer(answer_idx,answer_str,**kwargs):
+    if not set(['submission_data','checker_str','assignment']).issubset(globals()):
+        print('Login required')
+        print('Please make sure you have run the first cell above')
+        return
+
+    if ('email' not in submission_data):
+        print('Login required')
+        print('Please submit your email')
+        return
+
+    if (answer_str not in globals()):
+        print('The answer is not defined. Make sure you have run the cell above first.')
+        return
+
+    answer = globals()[answer_str]
+
+
+    if isinstance(answer,types.FunctionType):
+        answer = inspect.getsource(answer)
+    print("Your answer is:")
+    print(answer)
+
+    question = assignment.questions[answer_idx]
+    solution = question['solution']
+    result_type = question['resultType']
+    question_id = question['_id']
+
+    
+    result = check(answer, solution, result_type,**kwargs)
+    try:
+        ans = submission_data['answers'][answer_idx]
+        ans['answer'] = answer
+        submission_data['currentScore'] -= question['score']*ans['clientCheck']
+        ans['clientCheck'] = int(result)
+        submission_data['currentScore'] += question['score']*ans['clientCheck']
+        _ = Submission.create(db, submission_data)
+    except IndexError:
+        print('Wrong Answer Index')
+    except Exception as e:
+        print(f'Something else went wrong\n  {e}')
+    finally:
+        score = submission_data['currentScore']
+        print(f'Your current score: {score}/{total_score}')
         
 
 class User():
