@@ -42,10 +42,10 @@ def check(submission, solution, assignment_type, **kwargs):
             return False
 
     if (assignment_type == 'Function'):
-        if 'test_case' not in kwargs:
+        if 'test_cases' not in kwargs:
             printt("No test cases input",is_debug)
             return False
-        test_cases = kwargs['test_case']
+        test_cases = kwargs['test_cases']
 
         try:
             score = 0
