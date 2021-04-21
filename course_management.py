@@ -16,6 +16,12 @@ def is_1Darray_equal(a,b): # include Series
     if (np.issubdtype(a.dtype.type, np.int) or np.issubdtype(a.dtype.type, np.float)) and \
         (np.issubdtype(b.dtype.type, np.int) or np.issubdtype(b.dtype.type, np.float)):
         return np.all(is_close(a,b))
+
+    if a.dtype.kind in {'U', 'S','O'} and b.dtype.kind in {'U', 'S','O'}: # if contain string
+        # replace nan in string ndarray (all type of problems)
+        a = pd.Series(a).fillna('NAN_VALUE').values
+        b = pd.Series(b).fillna('NAN_VALUE').values
+
     return np.array_equal(a,b)
 
 def is_df_equal(a,b,**kwargs):
