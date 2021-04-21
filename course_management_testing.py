@@ -1,3 +1,54 @@
+def test_is_equal_func():
+    assert is_equal(1,1.0)==True
+    assert is_equal(1.0,1)==True
+    assert is_equal(1.001,1)==False
+    assert is_equal(1,1.0001)==False
+    assert is_equal(1,1.00001)==True
+    assert is_equal(1.00002,1.00004)==False
+    assert is_equal(1.00002,1.00003)==True
+
+    assert is_equal('a','b')==False
+    assert is_equal('abc','abc')==True
+
+    assert is_equal((1,2,3),(1,2,3))==True
+    assert is_equal([1,2,3],[1,2,3])==True
+    assert is_equal([1.00001,2,3],[1,2,3])==True
+    assert is_equal([1.0001,2,3],[1,2,3])==False
+    assert is_equal([1.00001,-2.49999,3],[1,-2.5,3])==True
+    assert is_equal((1.00001,-2.49999,3),(1,-2.5,3))==True
+    assert is_equal(('a','bbb','c'),('a','bbb','c'))==True
+    assert is_equal(('a','bbb','c',1,2,3),('a','bbb','c',1,2,3))==True
+
+    assert is_equal(np.array([1,2,3]),np.array([1,2,3]))==True
+    assert is_equal(np.array([1.,2.,3.]),np.array([1,2,3]))==True
+    assert is_equal(np.array([1.00001,-2.49999,3]),np.array([1,-2.5,3]))==True
+    assert is_equal(np.array(('a','bbb','c')),np.array(('a','bbb','c')))==True
+    assert is_equal(np.array([1,2,3]).astype(np.int8),np.array([1.00001,2,3]).astype(np.float16))==True
+    assert is_equal(np.array([1,2,3]).astype(np.int16),np.array([1,2,3]).astype(np.uint8))==True
+
+
+    assert is_equal(pd.Series([1,2,3]),pd.Series([1,2,3]))==True
+    assert is_equal(pd.Series([1.,2.,3.]),pd.Series([1,2,3]))==True
+    assert is_equal(pd.Series([1.00001,2,3]),pd.Series([1,2,3]))==True
+    assert is_equal(pd.Series([1.0001,2,3]),pd.Series([1,2,3]))==False
+    assert is_equal(pd.Series([1.00001,-2.49999,3]),pd.Series([1,-2.5,3]))==True
+    assert is_equal(pd.Series(('a','bbb','c')),pd.Series(('a','bbb','c')))==True
+    assert is_equal(pd.Series([1.00001,-2.49999,3],index=[0,1,2],name='asd'),pd.Series([1,-2.5,3],index=[2,3,4],name='sdf'))==True
+
+
+    a = pd.DataFrame({'col1':[1.00001,2,3],'col2':['a','b','c'],'col3':[-2.49999,3,np.NaN]})
+    b = pd.DataFrame({'col1':[1,2,3],'col2':['a','b','c'],'col3':[-2.5,3,np.NaN]})
+    assert is_equal(a,b)==True
+    a = pd.DataFrame({'col1':[1.00001,2,3],'col2':['a','b','c'],'col3':[-2.49999,3,np.NaN]})
+    b = pd.DataFrame({'col4':[1,2,3],'col5':['a','b','c'],'col6':[-2.5,3,np.NaN]})
+    assert is_equal(a,b)==False
+    assert is_equal(a,b,same_col_name=True)==False
+    assert is_equal(a,b,holaamigo='whatthefuck')==False
+    assert is_equal(a,b,same_col_name = False)==True
+    a = pd.DataFrame({'col1':[1.00001,2,3]})
+    b = pd.DataFrame({'col1':[1,2,np.NaN]})
+    assert is_equal(a,b)==False
+
 def testing(db, clean_up=False):
     print('TESTING COURSE API ------------------------------')
     # Creating a course
