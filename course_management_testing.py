@@ -18,6 +18,10 @@ def test_is_equal_func():
     assert is_equal((1.00001,-2.49999,3),(1,-2.5,3))==True
     assert is_equal(('a','bbb','c'),('a','bbb','c'))==True
     assert is_equal(('a','bbb','c',1,2,3),('a','bbb','c',1,2,3))==True
+    assert is_equal([None],[None])==True
+    assert is_equal([1,None],[1,None])==True
+    assert is_equal([1.,None],[1.,None])==True
+    assert is_equal(['a',None],['a',None])==True
 
     assert is_equal(np.array([1,2,3]),np.array([1,2,3]))==True
     assert is_equal(np.array([1.,2.,3.]),np.array([1,2,3]))==True
@@ -45,9 +49,16 @@ def test_is_equal_func():
     assert is_equal(a,b,same_col_name=True)==False
     assert is_equal(a,b,holaamigo='whatthefuck')==False
     assert is_equal(a,b,same_col_name = False)==True
-    a = pd.DataFrame({'col1':[1.00001,2,3]})
-    b = pd.DataFrame({'col1':[1,2,np.NaN]})
-    assert is_equal(a,b)==False
+
+    a = pd.DataFrame({'col1':[np.NaN]})
+    b = pd.DataFrame({'col1':[np.NaN]})
+    assert is_equal(a,b)==True
+    a = pd.DataFrame({'col1':[np.NaN,1]})
+    b = pd.DataFrame({'col1':[np.NaN,1]})
+    assert is_equal(a,b)==True
+    a = pd.DataFrame({'col1':[np.NaN,'a']})
+    b = pd.DataFrame({'col1':[np.NaN,'a']})
+    assert is_equal(a,b)==True
 
 def testing(db, clean_up=False):
     print('TESTING COURSE API ------------------------------')
