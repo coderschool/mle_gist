@@ -53,7 +53,7 @@ def check(submission, solution, assignment_type, **kwargs):
         try:
             df_sub = pd.read_sql_query(submission, conn)
             df_sol = pd.read_sql_query(solution, conn)
-            if is_equal(df_sub,df_sol,same_col_name=False)
+            if is_equal(df_sub,df_sol,same_col_name=False):
                 printt('You passed! Good job!',is_debug)
                 return True
             
