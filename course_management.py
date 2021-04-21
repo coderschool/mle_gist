@@ -3,18 +3,40 @@ import re
 import pandas as pd
 import numpy as np
 import types
+from functools import partial
 
 def printt(msg,debug=False):
     if not debug: print(msg)
         
-def is_equal(a,b):
-    if isinstance(a, (int, str, float, bool)) and isinstance(b, (int, str, float, bool)):
-        return a == b
-    if isinstance(a, (pd.DataFrame, pd.Series)) and isinstance(b, (pd.DataFrame, pd.Series)):
-        return a.equals(b)
-    if isinstance(a, (np.ndarray)) and isinstance(b, (np.ndarray)):
-        return np.array_equal(a, b)
-    return False
+is_close = partial(np.isclose,atol=1e-6,equal_nan=True)
+def is_1Darray_equal(a,b): # include Series
+    if hasattr(a,'values'): a = a.values
+    if hasattr(b,'values'): b = b.values
+
+    if (np.issubdtype(a.dtype.type, np.int) or np.issubdtype(a.dtype.type, np.float)) and \
+        (np.issubdtype(b.dtype.type, np.int) or np.issubdtype(b.dtype.type, np.float)):
+        return np.all(is_close(a,b))
+    return np.array_equal(a,b)
+
+def is_df_equal(a,b,**kwargs):
+    if a.shape != b.shape: return False
+    same_col_name = kwargs['same_col_name'] if 'same_col_name' in kwargs else True
+    if same_col_name and not a.columns.equals(b.columns): return False
+    return np.all(list(map(is_1Darray_equal, a.to_dict('series').values(),b.to_dict('series').values())))
+
+
+def is_equal(a,b,**kwargs):
+    if (a is None) or (b is None): return False
+    if isinstance(a,(int,float)) and isinstance(b,(int,float)):
+        return is_close(a,b)
+    if isinstance(a,(list,tuple)) and isinstance(b,(list,tuple)):
+        return is_1Darray_equal(np.array(a),np.array(b))
+    if isinstance(a, (np.ndarray,pd.Series)) and isinstance(b, (np.ndarray,pd.Series)):
+        return is_1Darray_equal(a,b)
+    if isinstance(a,pd.DataFrame) and isinstance(b,pd.DataFrame):
+        return is_df_equal(a,b,**kwargs)
+
+    return a==b
 
 def check(submission, solution, assignment_type, **kwargs):
     is_debug = kwargs['debug'] if 'debug' in kwargs else False
@@ -31,11 +53,11 @@ def check(submission, solution, assignment_type, **kwargs):
         try:
             df_sub = pd.read_sql_query(submission, conn)
             df_sol = pd.read_sql_query(solution, conn)
-            if np.array_equal(df_sol.values,df_sub.values):
+            if is_equal(df_sub,df_sol,same_col_name=False)
                 printt('You passed! Good job!',is_debug)
                 return True
             
-            printt("Your solution is not correct, try again!\n Make sure the columns' order is correct, as shown in the output",is_debug)
+            printt("Your solution is not correct, try again!\n Make sure the order of each column is correct, as shown in the output",is_debug)
             return False
         except Exception as e:
             printt(f'Something went wrong. {e}',is_debug)
