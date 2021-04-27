@@ -44,77 +44,92 @@ def is_equal(a,b,**kwargs):
 
     return a==b
 
+def check_sql(submission,solution,**kwargs):
+    if 'connection' not in kwargs:
+        printt("No database connection input",is_debug)
+        return False
+
+    if (not isinstance(solution, str)):
+        printt("Your SQL answer must be a string",is_debug)
+        return False
+
+    try:
+        conn = kwargs['connection']
+        df_sub = pd.read_sql_query(submission, conn)
+        df_sol = pd.read_sql_query(solution, conn)
+        if is_equal(df_sub,df_sol,same_col_name=False):
+            printt('You passed! Good job!',is_debug)
+            return True
+
+        printt("Your solution is not correct, try again!\n Make sure the order of each column is correct, as shown in the output",is_debug)
+        return False
+    except Exception as e:
+        printt(f'Something went wrong. {e}',is_debug)
+        return False
+    
+def check_function(submission,solution,**kwargs):
+    if 'test_cases' not in kwargs:
+        printt("No test cases input",is_debug)
+        return False
+
+    try:
+        test_cases = kwargs['test_cases']
+        score = 0
+        exec(submission)
+        exec(solution)
+        func_name_sub = submission.split('(')[0][4:]
+        func_name_sol = solution.split('(')[0][4:]
+        for tc in test_cases:
+            result_sub = locals()[func_name_sub](*tc)
+            result_sol = locals()[func_name_sol](*tc)
+            if is_equal(result_sub,result_sol):
+                score += 1
+        printt(f'You have passed {score}/{len(test_cases)} test cases',is_debug)
+        return score/len(test_cases)
+    except Exception as e:
+        printt('Your solution is not correct, try again',is_debug)
+        return 0
+
+    
+def check_expression(submission,solution,**kwargs):
+    if (not isinstance(solution, str)):
+        printt("Your expression answer must be a string",is_debug)
+        return False
+    try:
+        df = kwargs['df']
+        result = eval(solution)
+        result_sub = eval(submission)
+        assert is_equal(result,result_sub)
+        printt('You passed! Good job!',is_debug)
+        return True
+    except Exception as e:
+        printt('Your solution is not correct, try again',is_debug)
+        return False
+
+
+def check_value(submission,solution,**kwargs):
+    try:
+        assert is_equal(solution,submission)
+        printt('You passed! Good job!',is_debug)
+        return True
+    except Exception as e:
+        printt('Your solution is not correct, try again',is_debug)
+        return False
+    
 def check(submission, solution, assignment_type, **kwargs):
     is_debug = kwargs['debug'] if 'debug' in kwargs else False
     if (assignment_type == 'SQL'):
-        if 'connection' not in kwargs:
-            printt("No database connection input",is_debug)
-            return False
-        
-        if (not isinstance(solution, str)):
-            printt("Your SQL answer must be a string",is_debug)
-            return False
-        
-        try:
-            conn = kwargs['connection']
-            df_sub = pd.read_sql_query(submission, conn)
-            df_sol = pd.read_sql_query(solution, conn)
-            if is_equal(df_sub,df_sol,same_col_name=False):
-                printt('You passed! Good job!',is_debug)
-                return True
-            
-            printt("Your solution is not correct, try again!\n Make sure the order of each column is correct, as shown in the output",is_debug)
-            return False
-        except Exception as e:
-            printt(f'Something went wrong. {e}',is_debug)
-            return False
+        return check_sql(submission,solution,**kwargs)
 
     if (assignment_type == 'Function'):
-        if 'test_cases' not in kwargs:
-            printt("No test cases input",is_debug)
-            return False
-        
-        try:
-            test_cases = kwargs['test_cases']
-            score = 0
-            exec(submission)
-            exec(solution)
-            func_name_sub = submission.split('(')[0][4:]
-            func_name_sol = solution.split('(')[0][4:]
-            for tc in test_cases:
-                result_sub = locals()[func_name_sub](*tc)
-                result_sol = locals()[func_name_sol](*tc)
-                if is_equal(result_sub,result_sol):
-                    score += 1
-            printt(f'You have passed {score}/{len(test_cases)} test cases',is_debug)
-            return score/len(test_cases)
-        except Exception as e:
-            printt('Your solution is not correct, try again',is_debug)
-            return 0
+        return check_function(submission,solution,**kwargs)
+
 
     if (assignment_type == "Expression"):
-        if (not isinstance(solution, str)):
-            printt("Your expression answer must be a string",is_debug)
-            return False
-        try:
-            df = kwargs['df']
-            result = eval(solution)
-            result_sub = eval(submission)
-            assert is_equal(result,result_sub)
-            printt('You passed! Good job!',is_debug)
-            return True
-        except Exception as e:
-            printt('Your solution is not correct, try again',is_debug)
-            return False
+        return check_expression(submission,solution,**kwargs)
         
     if (assignment_type == "Value"):
-        try:
-            assert is_equal(solution,submission)
-            printt('You passed! Good job!',is_debug)
-            return True
-        except Exception as e:
-            printt('Your solution is not correct, try again',is_debug)
-            return False
+        return check_value(submission,solution,**kwargs)
       
 def verify_answer(answer_idx,answer_str,**kwargs):
     if not set(['submission_data','checker_str','assignment']).issubset(globals()):
