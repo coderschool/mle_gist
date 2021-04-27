@@ -50,13 +50,13 @@ def check(submission, solution, assignment_type, **kwargs):
         if 'connection' not in kwargs:
             printt("No database connection input",is_debug)
             return False
-        conn = kwargs['connection']
         
         if (not isinstance(solution, str)):
             printt("Your SQL answer must be a string",is_debug)
             return False
         
         try:
+            conn = kwargs['connection']
             df_sub = pd.read_sql_query(submission, conn)
             df_sol = pd.read_sql_query(solution, conn)
             if is_equal(df_sub,df_sol,same_col_name=False):
@@ -73,9 +73,9 @@ def check(submission, solution, assignment_type, **kwargs):
         if 'test_cases' not in kwargs:
             printt("No test cases input",is_debug)
             return False
-        test_cases = kwargs['test_cases']
-
+        
         try:
+            test_cases = kwargs['test_cases']
             score = 0
             exec(submission)
             exec(solution)
@@ -88,7 +88,7 @@ def check(submission, solution, assignment_type, **kwargs):
                     score += 1
             printt(f'You have passed {score}/{len(test_cases)} test cases',is_debug)
             return score/len(test_cases)
-        except:
+        except Exception as e:
             printt('Your solution is not correct, try again',is_debug)
             return 0
 
@@ -96,14 +96,14 @@ def check(submission, solution, assignment_type, **kwargs):
         if (not isinstance(solution, str)):
             printt("Your expression answer must be a string",is_debug)
             return False
-
         try:
+            df = kwargs['df']
             result = eval(solution)
             result_sub = eval(submission)
             assert is_equal(result,result_sub)
             printt('You passed! Good job!',is_debug)
             return True
-        except:
+        except Exception as e:
             printt('Your solution is not correct, try again',is_debug)
             return False
         
@@ -112,10 +112,10 @@ def check(submission, solution, assignment_type, **kwargs):
             assert is_equal(solution,submission)
             printt('You passed! Good job!',is_debug)
             return True
-        except:
+        except Exception as e:
             printt('Your solution is not correct, try again',is_debug)
             return False
-
+      
 def verify_answer(answer_idx,answer_str,**kwargs):
     if not set(['submission_data','checker_str','assignment']).issubset(globals()):
         print('Login required')
