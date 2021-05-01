@@ -101,6 +101,11 @@ def check_expression(submission,solution,**kwargs):
     if (not isinstance(solution, str)):
         printt("Your expression answer must be a string",is_debug)
         return False
+    
+    if 'df' not in kwargs:
+        printt("No variable 'df'. Make you to use 'df' as your dataframe variable",is_debug)
+        return False
+    
     try:
         df = kwargs['df']
         result = eval(solution)
