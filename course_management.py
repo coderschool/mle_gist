@@ -5,8 +5,8 @@ import numpy as np
 import types
 from functools import partial
 
-def printt(msg,debug=False):
-    if not debug: print(msg)
+def printt(msg,debug=True):
+    if debug: print(msg)
         
 is_close = partial(np.isclose,atol=1e-6,equal_nan=True)
 def is_1Darray_equal(a,b): # include Series
