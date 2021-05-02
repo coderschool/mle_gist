@@ -100,7 +100,7 @@ def generate_answer_cells(new_cells,q_idx,q_type,func_head = None):
         new_cells.append(nbf.v4.new_code_cell(''.join(results)))
         # TODO: handle function's test_cases better. Save it to database
 
-def generate_submit_code(new_cells):
+def generate_submit_code(new_cells,assignment_id):
     results = ['#@title Before you start, please login with the same email you have registered for the course {display-mode: "form"}\n',
     '\n',
     '# This code will be hidden when the notebook is loaded.\n',
@@ -113,7 +113,7 @@ def generate_submit_code(new_cells):
     "checker_str = request.urlopen('https://raw.githubusercontent.com/coderschool/mle_gist/master/course_management.py')\n",
     'exec(checker_str.read())\n',
     '\n',
-    "assignment_id = '607ec0fc5dcd8e000a52ea64'\n",
+    "assignment_id = '"+assignment_id+"'\n",
     'assignment = Assignment.get_assignment_by_id(db, assignment_id)\n',
     "total_score = sum([q['score'] for q in assignment.questions])\n",
     '\n',
@@ -164,11 +164,11 @@ def generate_submit_code(new_cells):
     new_cells.append(nbf.v4.new_code_cell(''.join(results)))
 
 
-def generate_assignment_notebook(fname,solution_path):
+def generate_assignment_notebook(fname,solution_path,assignment_id):
     new_nb_json = nbf.v4.new_notebook()
     nb_json = json.load(open(solution_path,'r'))
     new_cells = []
-    generate_submit_code(new_cells) # "before you start"
+    generate_submit_code(new_cells,assignment_id) # "before you start" cell
 
     markdown_pattern = r'^#{1,} Question\s(\d{1,})\s\((.*):\s(\d{1,}).*'
     i = 0
