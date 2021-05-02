@@ -164,7 +164,7 @@ def generate_submit_code(new_cells):
     new_cells.append(nbf.v4.new_code_cell(''.join(results)))
 
 
-def generate_assignment_notebook(fname,solution_path=SOLUTION_PATH):
+def generate_assignment_notebook(fname,solution_path):
     new_nb_json = nbf.v4.new_notebook()
     nb_json = json.load(open(solution_path,'r'))
     new_cells = []
