@@ -2,7 +2,7 @@ import json
 import re
 import nbformat as nbf
 
-# Get the question list (question,answer, points, type) from solution notebook
+############################## Get the question list (question,answer, points, type) from solution notebook ##############################
 def construct_quest_dict(q_str,q_pts,solution,q_type):
     return {
             'question': q_str,
@@ -54,7 +54,7 @@ def generate_question_list(PATH):
     return q_list
 
 
-# Generate new solution-free client
+############################## Generate new solution-free client ##############################
 def generate_answer_cells(new_cells,q_idx,q_type,func_head = None):
     q_idx = str(q_idx)
 
