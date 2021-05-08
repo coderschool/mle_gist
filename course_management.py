@@ -41,7 +41,9 @@ def is_equal(a,b,**kwargs):
         return is_1Darray_equal(a,b)
     if isinstance(a,pd.DataFrame) and isinstance(b,pd.DataFrame):
         return is_df_equal(a,b,**kwargs)
-
+    if not type(a) is type(b):
+        return False
+    
     return a==b
 
 def check_sql(submission,solution,**kwargs):
