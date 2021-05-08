@@ -47,7 +47,7 @@ def is_equal(a,b,**kwargs):
     return a==b
 
 def check_sql(submission,solution,**kwargs):
-    is_debug = kwargs['debug'] if 'debug' in kwargs else False
+    is_debug = kwargs['debug'] if 'debug' in kwargs else True
 
     if 'connection' not in kwargs:
         printt("No database connection input",is_debug)
@@ -72,7 +72,7 @@ def check_sql(submission,solution,**kwargs):
         return False
     
 def check_function(submission,solution,**kwargs):
-    is_debug = kwargs['debug'] if 'debug' in kwargs else False
+    is_debug = kwargs['debug'] if 'debug' in kwargs else True
 
     if 'test_cases' not in kwargs:
         printt("No test cases input",is_debug)
@@ -98,7 +98,7 @@ def check_function(submission,solution,**kwargs):
 
     
 def check_expression(submission,solution,**kwargs):
-    is_debug = kwargs['debug'] if 'debug' in kwargs else False
+    is_debug = kwargs['debug'] if 'debug' in kwargs else True
 
     if (not isinstance(solution, str)):
         printt("Your expression answer must be a string",is_debug)
@@ -121,7 +121,7 @@ def check_expression(submission,solution,**kwargs):
 
 
 def check_value(submission,solution,**kwargs):
-    is_debug = kwargs['debug'] if 'debug' in kwargs else False
+    is_debug = kwargs['debug'] if 'debug' in kwargs else True
 
     try:
         assert is_equal(solution,submission)
