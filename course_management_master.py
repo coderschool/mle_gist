@@ -164,7 +164,7 @@ def generate_submit_code(new_cells,assignment_id):
     new_cells.append(nbf.v4.new_code_cell(''.join(results)))
 
 
-def generate_assignment_notebook(fname,solution_path,assignment_id):
+def generate_assignment_notebook(client_path,solution_path,assignment_id):
     new_nb_json = nbf.v4.new_notebook()
     nb_json = json.load(open(solution_path,'r'))
     new_cells = []
@@ -198,7 +198,7 @@ def generate_assignment_notebook(fname,solution_path,assignment_id):
         i+=1
 
     new_nb_json['cells'] = new_cells
-    if '.ipynb' in fname:
-        nbf.write(new_nb_json, PATH+fname)
+    if '.ipynb' in client_path:
+        nbf.write(new_nb_json, client_path)
     else:
-        nbf.write(new_nb_json, PATH+f'{fname}.ipynb')
+        nbf.write(new_nb_json, f'{client_path}.ipynb')
