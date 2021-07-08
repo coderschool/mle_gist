@@ -79,8 +79,12 @@ def generate_answer_cells(new_cells,q_idx,q_type,func_head = None):
         results.append('answer_' + q_idx + ' = """\n')
         results.append('\n')
         results.append('"""\n')
+        new_cells.append(nbf.v4.new_code_cell(''.join(results)))
+        
+        results=[]
         results.append(f'pd.read_sql_query(answer_{q_idx}, conn)')
         new_cells.append(nbf.v4.new_code_cell(''.join(results)))
+        
         results=[]
         results.append('#@title ####Run this cell to check your answer {display-mode: "form"}\n')
         results.append(f'idx = {q_idx}\n')
