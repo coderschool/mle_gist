@@ -167,11 +167,18 @@ def generate_submit_code(new_cells,assignment_id):
     'display(button, output)']
     new_cells.append(nbf.v4.new_code_cell(''.join(results)))
 
+def generate_instruction_md(new_cells):
+    results = ['## Remember to save a copy in drive before doing this exercise!\n',
+               '\n',
+               '![](https://i.imgur.com/rPnCNKw.png)'
+              ]
+    new_cells.append(nbf.v4.new_markdown_cell(''.join(results)))
 
 def generate_assignment_notebook(client_path,solution_path,assignment_id):
     new_nb_json = nbf.v4.new_notebook()
     nb_json = json.load(open(solution_path,'r'))
     new_cells = []
+    generate_instruction_md(new_cells)
     generate_submit_code(new_cells,assignment_id) # "before you start" cell
 
     markdown_pattern = r'^#{1,} Question\s(\d{1,})\s\((.*):\s(\d{1,}).*'
